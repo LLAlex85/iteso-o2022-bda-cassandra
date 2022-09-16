@@ -67,13 +67,13 @@ def filter_by_type(query):
 def filter_by_date(query):
     return FilterByDateRage(query)
 
-my_query = ConcreteQuery()
-my_query = FilterByType(my_query)
-my_query = FilterBySymbol(my_query)
-my_query = FilterByDateRage(my_query)
+#my_query = ConcreteQuery()
+#my_query = FilterByType(my_query)
+#my_query = FilterBySymbol(my_query)
+#my_query = FilterByDateRage(my_query)
 
 
-print(my_query.create_query("trades_by_a_td", ["toDate(trade_id)", "trade_id", "type",
-                            "symbol", "shares", "price", "amount"], "account"))
+#print(my_query.create_query("trades_by_a_td", ["toDate(trade_id)", "trade_id", "type",
+#                            "symbol", "shares", "price", "amount"], "account"))
 
         

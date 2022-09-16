@@ -68,6 +68,7 @@ def get_query_and_args(filter_options):
     if (filter_options):
         options = filter_options.split(',')
         options = [int(x) for x in options]
+        
     table_to_use = table[sum(options)][0]
     args = []
     #Create Concrete Query object
