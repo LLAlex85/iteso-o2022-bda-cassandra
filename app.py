@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import logging
 import os
-
+import string
+from datetime import datetime
 
 from cassandra.cluster import Cluster
 
 import model
+import trade_table
 
 # Set logger
 log = logging.getLogger()
@@ -15,7 +17,7 @@ handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(
 log.addHandler(handler)
 
 # Read env vars releated to Cassandra App
-CLUSTER_IPS = os.getenv('CASSANDRA_CLUSTER_IPS', '172.18.0.2')
+CLUSTER_IPS = os.getenv('CASSANDRA_CLUSTER_IPS', '172.17.0.2')
 KEYSPACE = os.getenv('CASSANDRA_KEYSPACE', 'investments')
 REPLICATION_FACTOR = os.getenv('CASSANDRA_REPLICATION_FACTOR', '1')
 
@@ -34,10 +36,8 @@ def print_menu():
 
 def print_trade_history_menu():
     thm_options = {
-        1: "All",
-        2: "Date Range",
-        3: "Transaction Type (Buy/Sell)",
-        4: "Instrument Symbol",
+        1: "Transaction Type (Buy/Sell)",
+        2: "Instrument Symbol"
     }
     for key in thm_options.keys():
         print('    ', key, '--', thm_options[key])
@@ -48,6 +48,46 @@ def set_username():
     log.info(f"Username set to {username}")
     return username
 
+def get_symbol():
+    return input('Introduce symbol: ')
+
+
+def get_type():
+    return input('Introduce type: ')
+
+table = {
+    0: ["trades_by_a_d", None, None],
+    1: ["trades_by_a_td", get_type, trade_table.filter_by_type],
+    2: ["trades_by_a_sd", get_symbol, trade_table.filter_by_symbol],
+    3: ["trades_by_a_std", None, None],
+}
+
+def get_query_and_args(filter_options):
+
+    options = []
+    if (filter_options):
+        options = filter_options.split(',')
+        options = [int(x) for x in options]
+    table_to_use = table[sum(options)][0]
+    args = []
+    #Create Concrete Query object
+    query = trade_table.ConcreteQuery()
+
+    args.append(input('Enter Account (Mandatory): '))
+
+    for i in options:
+        query = table[i][2](query)
+        args.append(table[i][1]())
+    
+    ans = input("Filter By Date? [Yy/Nn]: ")
+    if (ans.lower() == 'y'):
+        start_date = datetime.strptime(input("Enter start Date (YYYY-MM-DD):"),'%Y-%m-%d')
+        end_date = datetime.strptime(input("Enter End Date (YYYY-MM-DD):"),'%Y-%m-%d')
+        args.append(start_date)
+        args.append(end_date)
+        query = trade_table.filter_by_date(query)
+
+    return table_to_use, query, args
 
 
 def main():
@@ -68,10 +108,13 @@ def main():
         if option == 1:
             model.get_user_accounts(session, username)
         if option == 2:
-            pass
+            model.get_positions(session)
         if option == 3:
             print_trade_history_menu()
-            tv_option = int(input('Enter your trade view choice: '))
+            tv_option = input('Enter your trade filter options separated by commas e.g. 1,2. Hit only enter to show all trades: ')
+            table, query, args = get_query_and_args(tv_option)
+            model.get_all_trades_by_account(session, table, query, args)
+
         if option == 4:
             username = set_username()
         if option == 5:

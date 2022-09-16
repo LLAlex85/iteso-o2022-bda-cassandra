@@ -1,0 +1,1 @@
+SELECT * from trades_by_a_sd   where account = '64c87c3c-6530-4a4a-bf48-288b720cd4a6' and symbol = 'DIS' and trade_id < minTimeuuid('2019-07-01');

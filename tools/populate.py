@@ -25,6 +25,9 @@ def cql_stmt_generator(accounts_num=10, positions_by_account=100, trades_by_acco
     acc_stmt = "INSERT INTO accounts_by_user (username, account_number, cash_balance, name) VALUES ('{}', '{}', {}, '{}');"
     pos_stmt = "INSERT INTO positions_by_account(account, symbol, quantity) VALUES ('{}', '{}', {});"
     tad_stmt = "INSERT INTO trades_by_a_d (account, trade_id, type, symbol, shares, price, amount) VALUES('{}', {}, '{}', '{}', {}, {}, {});"
+    tatd_stmt = "INSERT INTO trades_by_a_td (account, trade_id, type, symbol, shares, price, amount) VALUES('{}', {}, '{}', '{}', {}, {}, {});"
+    tastd_stmt = "INSERT INTO trades_by_a_std (account, trade_id, type, symbol, shares, price, amount) VALUES('{}', {}, '{}', '{}', {}, {}, {});"
+    tasd_stmt = "INSERT INTO trades_by_a_sd (account, trade_id, type, symbol, shares, price, amount) VALUES('{}', {}, '{}', '{}', {}, {}, {});"
     accounts = []
     with open(CQL_FILE, "w") as fd:
         # Generate accounts by user
@@ -60,6 +63,12 @@ def cql_stmt_generator(accounts_num=10, positions_by_account=100, trades_by_acco
             price = random.uniform(0.1, 100000.0)
             amount = shares * price
             fd.write(tad_stmt.format(acc, trade_id, trade_type, sym, shares, price, amount))
+            fd.write('\n')
+            fd.write(tatd_stmt.format(acc, trade_id, trade_type, sym, shares, price, amount))
+            fd.write('\n')
+            fd.write(tastd_stmt.format(acc, trade_id, trade_type, sym, shares, price, amount))
+            fd.write('\n')
+            fd.write(tasd_stmt.format(acc, trade_id, trade_type, sym, shares, price, amount))
             fd.write('\n')
 
 
