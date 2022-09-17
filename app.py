@@ -49,11 +49,11 @@ def set_username():
     return username
 
 def get_symbol():
-    return input('Introduce symbol: ')
+    return input('Enter symbol: ')
 
 
 def get_type():
-    return input('Introduce type: ')
+    return input('Enter type: ')
 
 table = {
     0: ["trades_by_a_d", None, None],
@@ -73,7 +73,7 @@ def get_query_and_args(filter_options):
     for i in options:
         index |= i << 0
     table_to_use = table[index][0]
-    
+
     args = []
     #Create Concrete Query object
     query = trade_table.ConcreteQuery()
