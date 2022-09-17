@@ -78,7 +78,7 @@ def get_all_trades_by_account(session, table, query, args):
     rows = session.execute(stmt, args)
     print(f"Trades of account {args[0]}: ")
     for row in rows:
-        print(f"=== Trade ID: {row.trade_id} ===")
+        print(f"'\033[93m' === Trade ID: {row.trade_id} === \033[0m")
         print(f"- Date: {row.system_todate_trade_id}")
         print(f"- Quantity: {row.type}")
         print(f"- Symbol: {row.symbol}")
